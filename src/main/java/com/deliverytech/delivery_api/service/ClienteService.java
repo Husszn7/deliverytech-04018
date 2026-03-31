@@ -37,5 +37,16 @@ public class ClienteService {
         cliente.setAtivo(false);
         repository.save(cliente);
     }
+
+    public Cliente atualizar(Long id, Cliente dados){
+        Cliente cliente = buscarPorId(id);
+        cliente.setNome(dados.getNome());
+        cliente.setEmail(dados.getEmail());
+        cliente.setTelefone(dados.getTelefone());
+        cliente.setEndereco(dados.getEndereco());
+        return repository.save(cliente);
+    }
+
+
     
 }

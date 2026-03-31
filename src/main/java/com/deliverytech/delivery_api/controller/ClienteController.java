@@ -39,9 +39,14 @@ public class ClienteController {
         return service.buscarPorId(id);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/inativar-cliente")
     public void inativar(@PathVariable Long id){
         service.inativar(id);
+    }
+
+    @PutMapping("/{id}/atualizar-dados-clientes")
+    public Cliente atualizar(@PathVariable Long id, @RequestBody Cliente dados){
+        return service.atualizar(id, dados);
     }
 
 
