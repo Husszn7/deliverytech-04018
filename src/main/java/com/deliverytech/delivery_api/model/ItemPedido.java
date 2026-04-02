@@ -2,6 +2,7 @@ package com.deliverytech.delivery_api.model;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,23 +17,27 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "produtos")
-public class Produto {
+@Table(name="item_pedido")
+public class ItemPedido {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
+    private Integer quantidade;
 
-    private String descricao;
+    @Column(name = "preco_unitario")
+    private BigDecimal precoUnitario;
 
-    private BigDecimal preco;
 
-    private String categoria;
+    private BigDecimal subtotal;
 
-    private boolean disponivel;
+    @ManyToOne(fetch= FetchType.LAZY)
+    @JoinColumn(name="produto_id")
+    private Produto produto;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "restaurante_id")
-    private Restaurante restaurante;
+    @ManyToOne(fetch= FetchType.LAZY)
+    @JoinColumn(name="pedido_id")
+    private Pedido pedido;
+
 }

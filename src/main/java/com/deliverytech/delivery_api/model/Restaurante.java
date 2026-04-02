@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "restaurantes")
+@Table(name = "restaurante")
 public class Restaurante {
 
     @Id
@@ -41,4 +41,7 @@ public class Restaurante {
 
     @OneToMany(mappedBy= "restaurante", fetch=FetchType.LAZY)
     private List<Produto> produtos = new ArrayList<>();
+
+    @OneToMany(mappedBy= "restaurante", fetch=FetchType.LAZY)
+    private List<Pedido> pedidos = new ArrayList<>();
 }
