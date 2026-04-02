@@ -32,6 +32,7 @@ public class DataLoader {
     ){
         return args ->{
             System.out.println("=====Inserindo Clientes======");
+            
 
             Cliente c1 = new Cliente();
             c1.setNome("João Freitas");
@@ -160,12 +161,9 @@ public class DataLoader {
             pedido2.setValorTotal(BigDecimal.ZERO);
             pedido2.setRestaurante(r2);
 
-
-
             pedidoRepository.saveAll(List.of(pedido1, pedido2));
 
             System.out.println("=====Inserindo ItensPedido ======");
-
             ItemPedido i1 = new ItemPedido();
             i1.setPedido(pedido1); 
             i1.setProduto(p1);
@@ -183,12 +181,31 @@ public class DataLoader {
 
             itemPedidoRepository.saveAll(List.of(i1, i2));
 
+            pedido1.setValorTotal(i1.getSubtotal().add(pedido1.getTaxaEntrega()));
+            pedido2.setValorTotal(i2.getSubtotal().add(pedido2.getTaxaEntrega()));
+            pedidoRepository.save(pedido1);
+            pedidoRepository.save(pedido2);
+
             System.out.println("=====DTO - Itens do pedido ======");
             itemPedidoRepository.buscarItensPorPedido(pedido1.getId())
             .forEach(i -> System.out.println(
                 "Produto: " + i.getNomeProduto() +
                 "| Qtd: " + i.getQuantidade() + 
                 "| Subtotal: " + i.getSubtotal() 
+            ));
+
+            itemPedidoRepository.buscarItensPorPedido(pedido2.getId())
+            .forEach(i -> System.out.println(
+                "Produto: " + i.getNomeProduto() +
+                "| Qtd: " + i.getQuantidade() + 
+                "| Subtotal: " + i.getSubtotal() 
+            ));
+
+            System.out.println("=====DTO - Vendas por restaurante ======");
+
+            pedidoRepository.buscarVendasPorRestaurante()
+            .forEach(r -> System.out.println(
+                r.getNomeRestaurante() + " - " + r.getTotalVendas()
             ));
         };
     }
