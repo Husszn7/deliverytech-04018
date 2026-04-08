@@ -30,5 +30,10 @@ public class Cliente {
 
     @OneToMany(mappedBy = "cliente", fetch=FetchType.LAZY)
     private List<Pedido> pedidos = new ArrayList<>();
+
+
+    public Boolean isAtivo(){
+        return ativo;
+    }
 }
 
