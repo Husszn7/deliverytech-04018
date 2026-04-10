@@ -6,5 +6,5 @@ public enum StatusPedido {
     PREPARANDO,
     SAIU_PARA_ENTREGA,
     ENTREGUE,
-    CANCELANDO
+    CANCELADO
 }

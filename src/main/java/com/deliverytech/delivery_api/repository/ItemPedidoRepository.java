@@ -5,11 +5,10 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import com.deliverytech.delivery_api.dto.ItemPedidoDTO;
-import com.deliverytech.delivery_api.model.ItemPedido;
-
 import org.springframework.stereotype.Repository;
+
+import com.deliverytech.delivery_api.dto.ipDTO;
+import com.deliverytech.delivery_api.model.ItemPedido;
 
 @Repository
 public interface ItemPedidoRepository extends JpaRepository<ItemPedido, Long>{
@@ -23,5 +22,5 @@ public interface ItemPedidoRepository extends JpaRepository<ItemPedido, Long>{
             JOIN i.produto p
             WHERE i.pedido.id = :pedidoId
     """)
-    List<ItemPedidoDTO> buscarItensPorPedido(@Param("pedidoId") Long pedidoId);
+    List<ipDTO> buscarItensPorPedido(@Param("pedidoId") Long pedidoId);
 }
