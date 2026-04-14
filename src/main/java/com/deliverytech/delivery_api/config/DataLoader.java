@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.deliverytech.delivery_api.enums.CategoriaRestaurante;
 import com.deliverytech.delivery_api.enums.StatusPedido;
 import com.deliverytech.delivery_api.model.Cliente;
 import com.deliverytech.delivery_api.model.ItemPedido;
@@ -83,7 +84,7 @@ public class DataLoader {
 
             Restaurante r1 = new Restaurante();
             r1.setNome("pizza Top");
-            r1.setCategoria("pizzaria");
+            r1.setCategoria(CategoriaRestaurante.PIZZARIA);
             r1.setEndereco("Rua um, 111");
             r1.setTelefone("11 9999-1111");
             r1.setAvaliacao(new BigDecimal(4.5));
@@ -91,7 +92,7 @@ public class DataLoader {
 
             Restaurante r2 = new Restaurante();
             r2.setNome("Burger House");
-            r2.setCategoria("Hamburgueria");
+            r2.setCategoria(CategoriaRestaurante.HAMBURGUERIA);
             r2.setEndereco("Rua dois, 222");
             r2.setTelefone("11 9999-2222");
             r2.setAvaliacao(new BigDecimal(4.2));
