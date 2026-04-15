@@ -32,7 +32,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(
-    value = "/restaurantes",
+    value = "/api/restaurantes",
     produces = "application/json"
 )
 @CrossOrigin(origins = "*")
@@ -91,7 +91,7 @@ public class RestauranteController {
         @ApiResponse(responseCode = "200", description = "Restaurante encontrado com sucesso."),
         @ApiResponse(responseCode = "404", description = "Restaurante não encontrado.")
     })
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/buscar-restaurante-por-id")
     public ResponseEntity<com.deliverytech.delivery_api.dto.responses.ApiResponse<RestauranteResponseDTO>> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok()
             .header("Content-Type", "application/json")
