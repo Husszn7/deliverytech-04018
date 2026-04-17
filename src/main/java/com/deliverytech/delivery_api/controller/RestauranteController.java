@@ -32,74 +32,74 @@ import jakarta.validation.Valid;
 @CrossOrigin(origins = "*")
 public class RestauranteController {
 
-    private final RestauranteService service;
+        private final RestauranteService service;
 
-    public RestauranteController(RestauranteService service) {
-        this.service = service;
-    }
+        public RestauranteController(RestauranteService service) {
+                this.service = service;
+        }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANTE')")
-    @PostMapping
-    public ResponseEntity<ApiResponse<RestauranteResponseDTO>> cadastrar(
-            @Valid @RequestBody RestauranteDTO dados,
-            @AuthenticationPrincipal Usuario usuarioLogado) {
+        @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANTE')")
+        @PostMapping
+        public ResponseEntity<ApiResponse<RestauranteResponseDTO>> cadastrar(
+                @Valid @RequestBody RestauranteDTO dados,
+                @AuthenticationPrincipal Usuario usuarioLogado) {
 
-        RestauranteResponseDTO response = service.cadastrar(dados, usuarioLogado);
+                RestauranteResponseDTO response = service.cadastrar(dados, usuarioLogado);
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(response.getId())
-                .toUri();
+                URI location = ServletUriComponentsBuilder
+                        .fromCurrentRequest()
+                        .path("/{id}")
+                        .buildAndExpand(response.getId())
+                        .toUri();
 
-        return ResponseEntity.created(location)
-                .body(new ApiResponse<>(response));
-    }
+                return ResponseEntity.created(location)
+                        .body(new ApiResponse<>(response));
+        }
 
-    
-    @PatchMapping("/{id}/toggle")
-    public ResponseEntity<ApiResponse<RestauranteResponseDTO>> toggle(
-            @PathVariable Long id,
-            @AuthenticationPrincipal Usuario usuarioLogado) {
+        
+        @PatchMapping("/{id}/toggle")
+        public ResponseEntity<ApiResponse<RestauranteResponseDTO>> toggle(
+                @PathVariable Long id,
+                @AuthenticationPrincipal Usuario usuarioLogado) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>(service.toggle(id, usuarioLogado))
-        );
-    }
+                return ResponseEntity.ok(
+                        new ApiResponse<>(service.toggle(id, usuarioLogado))
+                );
+        }
 
-    @GetMapping
-    public ResponseEntity<PagedResponse<RestauranteResponseDTO>> listar(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+        @GetMapping
+        public ResponseEntity<PagedResponse<RestauranteResponseDTO>> listar(
+                @RequestParam(defaultValue = "0") int page,
+                @RequestParam(defaultValue = "10") int size) {
 
-        Pageable pageable = PageRequest.of(page, size);
+                Pageable pageable = PageRequest.of(page, size);
 
-        return ResponseEntity.ok(
-                new PagedResponse<>(service.listarAtivos(pageable))
-        );
-    }
+                return ResponseEntity.ok(
+                        new PagedResponse<>(service.listarAtivos(pageable))
+                );
+        }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<RestauranteResponseDTO>> buscarPorId(@PathVariable Long id) {
+        @GetMapping("/{id}")
+        public ResponseEntity<ApiResponse<RestauranteResponseDTO>> buscarPorId(@PathVariable Long id) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>(service.buscarPorId(id))
-        );
-    }
+                return ResponseEntity.ok(
+                        new ApiResponse<>(service.buscarPorId(id))
+                );
+        }
 
-    @GetMapping("/categoria")
-    public ResponseEntity<PagedResponse<RestauranteResponseDTO>> buscarPorCategoria(
-            @RequestParam String categoria,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+        @GetMapping("/categoria")
+        public ResponseEntity<PagedResponse<RestauranteResponseDTO>> buscarPorCategoria(
+                @RequestParam String categoria,
+                @RequestParam(defaultValue = "0") int page,
+                @RequestParam(defaultValue = "10") int size) {
 
-        Pageable pageable = PageRequest.of(page, size);
+                Pageable pageable = PageRequest.of(page, size);
 
-        return ResponseEntity.ok(
-                new PagedResponse<>(service.buscarPorCategoria(categoria, pageable))
-        );
-    }
+                return ResponseEntity.ok(
+                        new PagedResponse<>(service.buscarPorCategoria(categoria, pageable))
+                );
+        }
 
-    
+        
 }

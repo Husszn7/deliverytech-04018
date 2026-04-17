@@ -30,47 +30,47 @@ import jakarta.validation.Valid;
 @CrossOrigin(origins = "*")
 public class ProdutoController {
 
-    private final ProdutoService produtoService;
+        private final ProdutoService produtoService;
 
-    public ProdutoController(ProdutoService produtoService) {
-        this.produtoService = produtoService;
-    }
+        public ProdutoController(ProdutoService produtoService) {
+                this.produtoService = produtoService;
+        }
 
-    @PreAuthorize("hasAnyRole('ADMIN','RESTAURANTE')")
-    @PostMapping("/restaurante/{restauranteId}")
-    public ResponseEntity<ApiResponse<ProdutoResponseDTO>> cadastrar(
-            @PathVariable Long restauranteId,
-            @RequestBody @Valid ProdutoDTO produto,
-            @AuthenticationPrincipal Usuario usuarioLogado) {
+        @PreAuthorize("hasAnyRole('ADMIN','RESTAURANTE')")
+        @PostMapping("/restaurante/{restauranteId}")
+        public ResponseEntity<ApiResponse<ProdutoResponseDTO>> cadastrar(
+                @PathVariable Long restauranteId,
+                @RequestBody @Valid ProdutoDTO produto,
+                @AuthenticationPrincipal Usuario usuarioLogado) {
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>(
-                        produtoService.cadastrar(restauranteId, produto, usuarioLogado)
-                ));
-    }
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .body(new ApiResponse<>(
+                                produtoService.cadastrar(restauranteId, produto, usuarioLogado)
+                        ));
+        }   
 
-    @GetMapping("/restaurante/{restauranteId}")
-    public ResponseEntity<PagedResponse<ProdutoResponseDTO>> listarPorRestaurante(
-            @PathVariable Long restauranteId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+        @GetMapping("/restaurante/{restauranteId}")
+        public ResponseEntity<PagedResponse<ProdutoResponseDTO>> listarPorRestaurante(
+                @PathVariable Long restauranteId,
+                @RequestParam(defaultValue = "0") int page,
+                @RequestParam(defaultValue = "10") int size) {
 
-        Pageable pageable = PageRequest.of(page, size);
-        var pageResult = produtoService.listarPorRestaurante(restauranteId, pageable);
+                Pageable pageable = PageRequest.of(page, size);
+                var pageResult = produtoService.listarPorRestaurante(restauranteId, pageable);
 
-        return ResponseEntity.ok(new PagedResponse<>(pageResult));
-    }
+                return ResponseEntity.ok(new PagedResponse<>(pageResult));
+        }
 
-    @PreAuthorize("hasAnyRole('ADMIN','RESTAURANTE')")
-    @PatchMapping("/{produtoId}/disponibilidade")
-    public ResponseEntity<ApiResponse<ProdutoResponseDTO>> toggle(
-            @PathVariable Long produtoId,
-            @AuthenticationPrincipal Usuario usuarioLogado) {
+        @PreAuthorize("hasAnyRole('ADMIN','RESTAURANTE')")
+        @PatchMapping("/{produtoId}/disponibilidade")
+        public ResponseEntity<ApiResponse<ProdutoResponseDTO>> toggle(
+                @PathVariable Long produtoId,
+                @AuthenticationPrincipal Usuario usuarioLogado) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>(
-                        produtoService.toggleDisponibilidade(produtoId, usuarioLogado)
-                )
-        );
-    }
+                return ResponseEntity.ok(
+                        new ApiResponse<>(
+                                produtoService.toggleDisponibilidade(produtoId, usuarioLogado)
+                        )
+                );
+        }
 }

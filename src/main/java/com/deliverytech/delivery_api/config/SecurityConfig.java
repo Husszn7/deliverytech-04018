@@ -45,7 +45,8 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                .requestMatchers("/api/auth/me").authenticated()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                 .requestMatchers(HttpMethod.GET, "/api/restaurantes/**").permitAll()
@@ -53,7 +54,9 @@ public class SecurityConfig {
                     .hasAnyRole("ADMIN", "RESTAURANTE")
 
                 .requestMatchers(HttpMethod.GET, "/api/clientes/**").hasRole("ADMIN")
-                .requestMatchers("/api/clientes/cadastrar").hasAnyRole("ADMIN", "CLIENTE")
+                .requestMatchers(HttpMethod.POST,"/api/clientes/cadastrar").hasAnyRole("ADMIN", "CLIENTE")
+
+                .requestMatchers("/api/pedidos/**").hasAnyRole("ADMIN", "CLIENTE")
 
                 .requestMatchers(HttpMethod.POST, "/api/produtos/**")
                 .hasAnyRole("ADMIN", "RESTAURANTE")

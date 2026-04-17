@@ -13,6 +13,8 @@ public class ClienteResponseDTO {
     private String endereco;
     private Boolean ativo;
 
+    
+
     public Boolean isAtivo(){
         return ativo;
     }

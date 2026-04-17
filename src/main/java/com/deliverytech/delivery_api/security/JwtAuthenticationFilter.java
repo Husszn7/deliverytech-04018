@@ -48,11 +48,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         SecurityContextHolder.getContext().getAuthentication() == null) {
 
                     Usuario usuario = repository.findByEmail(email).orElse(null);
-
+                            System.out.println("Entrou no filtro");
+                            System.out.println("Email: " + email);
+                            System.out.println("Usuário encontrado: " + usuario);
                     if (usuario != null &&
                             jwtUtil.isTokenValid(token, usuario.getEmail())) {
 
-                        String role = jwtUtil.extractRole(token);
+                        String role = jwtUtil.extractClaims(token).get("role", String.class);
 
                         SimpleGrantedAuthority authority =
                                 new SimpleGrantedAuthority("ROLE_" + role);
