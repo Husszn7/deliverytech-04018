@@ -30,26 +30,28 @@ public class ClienteService {
     }
 
     @Transactional
-    public ClienteResponseDTO cadastrar(ClienteDTO dto, Usuario usuarioLogado){
-        if(usuarioLogado == null){
+    public ClienteResponseDTO cadastrar(ClienteDTO dto, Usuario usuarioLogado) {
+
+        if (usuarioLogado == null) {
             throw new BusinessException("Usuário não autenticado.");
         }
 
-        System.out.println("Usuario logado: " + usuarioLogado.getEmail() + " - Role: " + usuarioLogado.getRole());
-
         if (!usuarioLogado.getRole().name().equals("CLIENTE")
             && !usuarioLogado.getRole().name().equals("ADMIN")) {
-            throw new BusinessException("Apenas CLIENTE ou ADMIN podem cadastrar um perfil de cliente.");
+            throw new BusinessException("Apenas CLIENTE ou ADMIN podem criar perfil de cliente.");
         }
 
+        // 🔒 evita duplicidade por usuário
         if (repository.existsByUsuario_Id(usuarioLogado.getId())) {
-            throw new BusinessException("O usuário já possui um perfil de cliente.");
+            throw new BusinessException("Cliente já cadastrado para este usuário.");
         }
 
         Cliente cliente = mapper.map(dto, Cliente.class);
-        cliente.setAtivo(true);
+
         cliente.setUsuario(usuarioLogado);
         cliente.setEmail(usuarioLogado.getEmail());
+        cliente.setAtivo(true);
+
         Cliente salvo = repository.save(cliente);
 
         return mapper.map(salvo, ClienteResponseDTO.class);

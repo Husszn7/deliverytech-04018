@@ -1,6 +1,5 @@
 package com.deliverytech.delivery_api.service;
 
-
 import java.math.BigDecimal;
 
 import org.modelmapper.ModelMapper;
@@ -30,34 +29,36 @@ public class RestauranteService {
     }
 
     @Transactional
-    public RestauranteResponseDTO cadastrar(RestauranteDTO dto, Usuario usuarioLogado) {
+public RestauranteResponseDTO cadastrar(RestauranteDTO dto, Usuario usuarioLogado) {
 
-        if(usuarioLogado == null){
-            throw new BusinessException("Usuário não autenticado.");
-        }
-        System.out.println("Usuario logado: " + usuarioLogado.getEmail() + " - Role: " + usuarioLogado.getRole());
-
-        if (usuarioLogado.getRole().name().equals("RESTAURANTE"))  {
-            if(repository.existsByUsuario_Id(usuarioLogado.getId())){
-                throw new BusinessException("Você já possui um restaurante cadastrado.");
-            }
-        }
-
-        if (repository.existsByNome(dto.getNome())) {
-            throw new BusinessException("Restaurante com esse nome já cadastrado.");
-        }
-
-        CategoriaRestaurante categoriaEnum = CategoriaRestaurante.valueOf(dto.getCategoria().toUpperCase());
-
-        Restaurante r = mapper.map(dto, Restaurante.class);
-        r.setUsuario(usuarioLogado);
-        r.setCategoria(categoriaEnum);
-        r.setAtivo(true);
-        r.setAvaliacao(BigDecimal.ZERO);
-        
-        Restaurante salvo = repository.save(r);
-        return mapper.map(salvo, RestauranteResponseDTO.class);
+    if (usuarioLogado == null) {
+        throw new BusinessException("Usuário não autenticado.");
     }
+
+    if (usuarioLogado.getRole().name().equals("RESTAURANTE")) {
+
+        if (repository.existsByUsuario_Id(usuarioLogado.getId())) {
+            throw new BusinessException("Você já possui um restaurante.");
+        }
+    }
+
+    if (repository.existsByNome(dto.getNome())) {
+        throw new BusinessException("Restaurante já existe.");
+    }
+
+    CategoriaRestaurante categoriaEnum =
+            CategoriaRestaurante.valueOf(dto.getCategoria().toUpperCase());
+
+    Restaurante r = mapper.map(dto, Restaurante.class);
+
+    r.setUsuario(usuarioLogado); 
+
+    r.setCategoria(categoriaEnum);
+    r.setAtivo(true);
+    r.setAvaliacao(BigDecimal.ZERO);
+
+    return mapper.map(repository.save(r), RestauranteResponseDTO.class);
+}
 
     public Page<RestauranteResponseDTO> listarAtivos(Pageable pageable) {
         return repository.findByAtivoTrue(pageable)
@@ -65,11 +66,12 @@ public class RestauranteService {
     }
 
     public Page<RestauranteResponseDTO> buscarPorCategoria(String categoria, Pageable pageable) {
+
         CategoriaRestaurante categoriaEnum;
 
-        try{
+        try {
             categoriaEnum = CategoriaRestaurante.valueOf(categoria.toUpperCase());
-        }catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new BusinessException("Categoria inválida.");
         }
 
@@ -80,32 +82,34 @@ public class RestauranteService {
     public RestauranteResponseDTO buscarPorId(Long id) {
         Restaurante r = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Restaurante não encontrado."));
+
         return mapper.map(r, RestauranteResponseDTO.class);
     }
 
     @Transactional
     public RestauranteResponseDTO toggle(Long id, Usuario usuarioLogado) {
-        if(usuarioLogado == null){
+
+        if (usuarioLogado == null) {
             throw new BusinessException("Usuário não autenticado.");
         }
 
-        boolean isAdmin = usuarioLogado.getRole().name().equals("ADMIN");
         boolean isRestaurante = usuarioLogado.getRole().name().equals("RESTAURANTE");
+        boolean isAdmin = usuarioLogado.getRole().name().equals("ADMIN");
 
-        if(!isAdmin && !isRestaurante){
-            throw new BusinessException("Apenas ADMIN ou RESTAURANTE podem ativar/inativar um restaurante.");
+        if (!isRestaurante && !isAdmin) {
+            throw new BusinessException("Apenas ADMIN ou RESTAURANTE podem alterar restaurante.");
         }
 
         Restaurante restaurante = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Restaurante não encontrado."));
-        
-        if(isRestaurante){
-            if(!restaurante.getUsuario().getId().equals(usuarioLogado.getId())){
-                throw new BusinessException("Restaurantes só podem ativar/inativar seu próprio perfil.");
+        if (isRestaurante) {
+            if (!restaurante.getUsuario().getId().equals(usuarioLogado.getId())) {
+                throw new BusinessException("Você só pode alterar seu próprio restaurante.");
             }
         }
 
         restaurante.setAtivo(!restaurante.isAtivo());
+
         Restaurante salvo = repository.save(restaurante);
 
         return mapper.map(salvo, RestauranteResponseDTO.class);

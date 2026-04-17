@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-/* import org.springframework.security.crypto.password.PasswordEncoder; */
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +18,7 @@ import com.deliverytech.delivery_api.repository.UsuarioRepository;
 import com.deliverytech.delivery_api.security.JwtUtil;
 
 @RestController
-@RequestMapping(value = "/api/auth", produces="application/json")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final UsuarioRepository repository;
@@ -76,18 +75,19 @@ public class AuthController {
         }
 
         String token = jwtUtil.generateToken(usuario);
+
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
 
     @GetMapping("/me")
-    public ResponseEntity<Usuario> me(Authentication auth){
+    public ResponseEntity<Usuario> me(Authentication auth) {
+
         String email = auth.getName();
 
-        Usuario usuario = repository.findByEmail(email).orElseThrow();
+        Usuario usuario = repository.findByEmail(email)
+                .orElseThrow();
+
         return ResponseEntity.ok(usuario);
     }
-
-
-
 }

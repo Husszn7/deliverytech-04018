@@ -18,48 +18,51 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
-    private final  JwtAuthenticationFilter jwt;
-    
 
-    public SecurityConfig(JwtAuthenticationFilter jwt) {
-        this.jwt = jwt;
+    private final JwtAuthenticationFilter jwtFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        http.csrf(c -> c.disable())
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        .sessionManagement(sm -> 
-            sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        )
+        http
 
-        .exceptionHandling(ex -> ex.authenticationEntryPoint((req, res, e) ->
-            res.sendError(HttpServletResponse.SC_UNAUTHORIZED)
+            .csrf(csrf -> csrf.disable())
+
+            .sessionManagement(sm ->
+                sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-        )
 
-        .authorizeHttpRequests(auth -> auth
 
-            .requestMatchers("/api/auth/**").permitAll()
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((req, res, e) ->
+                    res.sendError(HttpServletResponse.SC_UNAUTHORIZED)
+                )
+            )
 
-            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+            .authorizeHttpRequests(auth -> auth
 
-            .requestMatchers(HttpMethod.GET, "/api/restaurantes/**").permitAll()
-            .requestMatchers(HttpMethod.PATCH, "/api/restaurantes/**")
-            .hasAnyRole("ADMIN", "RESTAURANTE")
-            .requestMatchers(HttpMethod.POST, "/api/restaurantes/**")
-            .hasAnyRole("ADMIN", "RESTAURANTE")
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-            .requestMatchers(HttpMethod.POST, "/api/produtos/**")
-            .hasAnyRole("ADMIN", "RESTAURANTE")
+                .requestMatchers(HttpMethod.GET, "/api/restaurantes/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/restaurantes/**")
+                    .hasAnyRole("ADMIN", "RESTAURANTE")
 
-            .requestMatchers(HttpMethod.GET, "/api/clientes/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/clientes/**").hasRole("ADMIN")
+                .requestMatchers("/api/clientes/cadastrar").hasAnyRole("ADMIN", "CLIENTE")
 
-            .requestMatchers("/api/clientes/cadastrar").hasAnyRole("ADMIN", "CLIENTE")
-            
-            .anyRequest().authenticated()
-        )
-        .addFilterBefore(jwt, UsernamePasswordAuthenticationFilter.class);
+                .requestMatchers(HttpMethod.POST, "/api/produtos/**")
+                .hasAnyRole("ADMIN", "RESTAURANTE")
+
+                .anyRequest().authenticated()
+            )
+
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 

@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +32,7 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@RequestMapping(value= "/api/clientes", produces = "application/json")
+@RequestMapping(value = "/api/clientes",  produces = "application/json")
 @Tag(name="Clientes", description="Endpoints para gerencimento de clientes.")
 public class ClienteController {
     private ClienteService service;
@@ -50,11 +49,14 @@ public class ClienteController {
             @ApiResponse(responseCode="400", description="Erro de validação."),
         }
     )
-    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
     @PostMapping("/cadastrar")
     public ResponseEntity<ClienteResponseDTO> cadastrar(
-        @Valid @RequestBody ClienteDTO dto, @AuthenticationPrincipal Usuario usuarioLogado){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.cadastrar(dto, usuarioLogado));
+            @Valid @RequestBody ClienteDTO dto,
+            @AuthenticationPrincipal Usuario logado) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.cadastrar(dto, logado));
     }
 
     @Operation(summary="Listar clientes ativos.")
