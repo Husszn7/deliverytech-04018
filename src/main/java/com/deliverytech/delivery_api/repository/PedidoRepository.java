@@ -41,7 +41,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     );
 
 
-        @Query("""
+        /* @Query("""
             select new com.deliverytech.delivery_api.dto.TotalVendasPorRestauranteDTO(
                     r.nome,
                     coalesce(sum(ip.subtotal), 0)
@@ -51,7 +51,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
                 join p.itens ip
                 group by r.nome
             """)
-            List<VendasPorRestauranteDTO> buscarVendasPorRestaurante();
+            List<VendasPorRestauranteDTO> buscarVendasPorRestaurante(); */
 
             @Query(value="""
                         SELECT c.nome AS cliente, COUNT(p.id) AS total_pedidos

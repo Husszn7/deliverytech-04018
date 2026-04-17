@@ -5,6 +5,9 @@ import java.util.Date;
 
 import org.springframework.stereotype.Service;
 
+import com.deliverytech.delivery_api.model.Usuario;
+
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -15,15 +18,16 @@ public class JwtUtil {
     private static final String SECRET_KEY = 
     "chave-super-secreta-para-jwt-delivery-2026-123456789";
 
-    private static final long EXPIRATION = 5000;
+    private static final long EXPIRATION = 1000 * 60 * 60 * 10; // 10 horas
 
     private Key getSignKey(){
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    public String generateToken(String email){
+    public String generateToken(Usuario usuario){
         return Jwts.builder()
-        .setSubject(email)
+        .setSubject(usuario.getEmail())
+        .claim("role", usuario.getRole().name())
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
         .signWith(getSignKey(), SignatureAlgorithm.HS256)
@@ -31,34 +35,31 @@ public class JwtUtil {
     }
 
     public String extractEmail(String token){
-        return Jwts.parserBuilder()
-        .setSigningKey(getSignKey())
-        .build()
-        .parseClaimsJws(token)
-        .getBody()
+        return extractClaims(token)
         .getSubject();
     }
 
-    public boolean isTokenValid(String token){
+    public boolean isTokenValid(String token, String email){
         try{
-            Jwts.parserBuilder()
-            .setSigningKey(getSignKey())
-            .build()
-            .parseClaimsJws(token);
-            return true;
+            Claims claims = extractClaims(token);
+            return claims.getSubject().equals(email)
+            && !claims.getExpiration().before(new Date());
 
         }catch(Exception e){
             return false;
         }
     }
 
-    public Object extractRoles(String token) {
+    public String extractRoles(String token) {
+        return extractClaims(token).get("roles", String.class);
+    }
+
+    public Claims extractClaims(String token){
         return Jwts.parserBuilder()
         .setSigningKey(getSignKey())
         .build()
         .parseClaimsJws(token)
-        .getBody()
-        .get("roles");
+        .getBody();
     }
 
 }

@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/produtos", produces = "application/json")
+@RequestMapping(value = "/api/produtos", produces = "application/json")
 @Tag(name = "Produtos", description = "Endpoints para gerenciamento do cardápio.")
 @CrossOrigin(origins = "*")
 public class ProdutoController {

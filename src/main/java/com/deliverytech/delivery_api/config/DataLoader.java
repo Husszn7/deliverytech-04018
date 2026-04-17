@@ -1,4 +1,4 @@
-package com.deliverytech.delivery_api.config;
+/* package com.deliverytech.delivery_api.config;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -109,7 +109,7 @@ public class DataLoader {
 
             System.out.println("> Restaurantes ativos:");
             restauranteRepository.findByAtivoTrue()
-                .forEach(r -> System.out.println(r.getNome())); */
+                .forEach(r -> System.out.println(r.getNome())); 
 
             System.out.println("=====Inserindo Produtos ======");
 
@@ -215,3 +215,4 @@ public class DataLoader {
     }
 }
 
+ */

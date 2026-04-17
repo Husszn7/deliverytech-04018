@@ -18,10 +18,10 @@ public class ClienteDTO {
     @NotBlank(message = "Campo nome é obrigatório.")
     private String nome;
 
-    @Schema(description="E-mail do cliente", example="elaine@gmail.com")
+    /* @Schema(description="E-mail do cliente", example="elaine@gmail.com")
     @Email(message = "E-mail inválido.")
     @NotBlank(message = "Campo e-mail é obrigatório.")
-    private String email;
+    private String email; */
 
     @Schema(description="Telefone/celular do cliente", example="(xx)xxxxx-xxxx")
     /* @Pattern(regexp="^\\(\\d{2}\\)\\d{4,5}-\\d{4}$",

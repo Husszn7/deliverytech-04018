@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.deliverytech.delivery_api.dto.requests.ClienteDTO;
 import com.deliverytech.delivery_api.dto.responses.ClienteResponseDTO;
 import com.deliverytech.delivery_api.dto.responses.PagedResponse;
+import com.deliverytech.delivery_api.model.Usuario;
 import com.deliverytech.delivery_api.service.ClienteService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,10 +30,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
+
 
 @RestController
-@RequestMapping("/api/clientes")
+@RequestMapping(value= "/api/clientes", produces = "application/json")
 @Tag(name="Clientes", description="Endpoints para gerencimento de clientes.")
 public class ClienteController {
     private ClienteService service;
@@ -47,9 +50,11 @@ public class ClienteController {
             @ApiResponse(responseCode="400", description="Erro de validação."),
         }
     )
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
     @PostMapping("/cadastrar")
-    public ResponseEntity<ClienteResponseDTO> cadastrar(@Valid @RequestBody ClienteDTO dto ){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.cadastrar(dto));
+    public ResponseEntity<ClienteResponseDTO> cadastrar(
+        @Valid @RequestBody ClienteDTO dto, @AuthenticationPrincipal Usuario usuarioLogado){
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.cadastrar(dto, usuarioLogado));
     }
 
     @Operation(summary="Listar clientes ativos.")

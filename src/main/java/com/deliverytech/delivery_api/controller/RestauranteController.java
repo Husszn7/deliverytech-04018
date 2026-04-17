@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.deliverytech.delivery_api.dto.requests.RestauranteDTO;
 import com.deliverytech.delivery_api.dto.responses.PagedResponse;
 import com.deliverytech.delivery_api.dto.responses.RestauranteResponseDTO;
+import com.deliverytech.delivery_api.model.Usuario;
 import com.deliverytech.delivery_api.service.RestauranteService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,9 +54,11 @@ public class RestauranteController {
         @ApiResponse(responseCode = "400", description = "Erro de validação nos campos enviados."),
         @ApiResponse(responseCode = "409", description = "Conflito: Nome de restaurante já existente.")
     })
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANTE')")
     @PostMapping
-    public ResponseEntity<com.deliverytech.delivery_api.dto.responses.ApiResponse<RestauranteResponseDTO>> cadastrar(@Valid @RequestBody RestauranteDTO dados) {
-        RestauranteResponseDTO response = service.cadastrar(dados);
+    public ResponseEntity<com.deliverytech.delivery_api.dto.responses.ApiResponse<RestauranteResponseDTO>> 
+    cadastrar(@Valid @RequestBody RestauranteDTO dados, Usuario usuarioLogado) {
+        RestauranteResponseDTO response = service.cadastrar(dados, usuarioLogado);
 
         URI location = ServletUriComponentsBuilder
             .fromCurrentRequest()
@@ -63,7 +67,6 @@ public class RestauranteController {
             .toUri();
 
         return ResponseEntity.created(location)
-            .header("Content-Type", "application/json")
             .body(new com.deliverytech.delivery_api.dto.responses.ApiResponse<>(response));
     }
 
@@ -123,9 +126,8 @@ public class RestauranteController {
         @ApiResponse(responseCode = "404", description = "Restaurante não encontrado.")
     })
     @PatchMapping("/{id}/toggle")
-    public ResponseEntity<com.deliverytech.delivery_api.dto.responses.ApiResponse<RestauranteResponseDTO>> toggle(@PathVariable Long id) {
-        return ResponseEntity.ok()
-            .header("Content-Type", "application/json")
-            .body(new com.deliverytech.delivery_api.dto.responses.ApiResponse<>(service.toggle(id)));
+    public ResponseEntity<com.deliverytech.delivery_api.dto.responses.ApiResponse<RestauranteResponseDTO>> 
+    toggle(@PathVariable Long id, Usuario usuarioLogado) {
+        return ResponseEntity.ok(new com.deliverytech.delivery_api.dto.responses.ApiResponse<>(service.toggle(id, usuarioLogado)));
     }
 }
