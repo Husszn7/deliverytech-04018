@@ -14,7 +14,9 @@ import com.deliverytech.delivery_api.model.Cliente;
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     Optional<Cliente> findByEmail(String email);
     boolean existsByEmail(String email);
+
     Page<Cliente> findByAtivoTrue(Pageable pageable);
+    
     List<Cliente> findByNomeContainingIgnoreCase(String nome);
 
     boolean existsByUsuario_Id(Long usuarioId);

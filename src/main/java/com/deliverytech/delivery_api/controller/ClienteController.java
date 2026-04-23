@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.deliverytech.delivery_api.dto.requests.ClienteDTO;
 import com.deliverytech.delivery_api.dto.responses.ClienteResponseDTO;
 import com.deliverytech.delivery_api.dto.responses.PagedResponse;
-import com.deliverytech.delivery_api.model.Usuario;
 import com.deliverytech.delivery_api.service.ClienteService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,11 +52,11 @@ public class ClienteController {
     @PostMapping("/cadastrar")
     public ResponseEntity<ClienteResponseDTO> cadastrar(
             @Valid @RequestBody ClienteDTO dto,
-            @AuthenticationPrincipal Usuario logado) {
+            @AuthenticationPrincipal(expression= "username") String email) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(service.cadastrar(dto, logado));
+                .body(service.cadastrar(dto, email));
     }
 
     @Operation(summary="Listar clientes ativos.")
@@ -67,6 +67,7 @@ public class ClienteController {
         }
     )
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PagedResponse<ClienteResponseDTO>> listarAtivos(
         @RequestParam(defaultValue="0") int page,
         @RequestParam(defaultValue="10")int size
@@ -90,8 +91,11 @@ public class ClienteController {
         }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<com.deliverytech.delivery_api.dto.responses.ApiResponse<ClienteResponseDTO>> buscarPorId(@PathVariable Long id){
-        return ResponseEntity.ok().header("Content-Type", "application/json").body(new com.deliverytech.delivery_api.dto.responses.ApiResponse<>( service.buscarPorId(id)));  
+    public ResponseEntity<com.deliverytech.delivery_api.dto.responses.ApiResponse<ClienteResponseDTO>> buscarPorId(
+        @PathVariable Long id){
+        return ResponseEntity.ok()
+        .header("Content-Type", "application/json")
+        .body(new com.deliverytech.delivery_api.dto.responses.ApiResponse<>( service.buscarPorId(id)));  
     }
 
     @Operation(summary="Ativar ou desativar cliente.")

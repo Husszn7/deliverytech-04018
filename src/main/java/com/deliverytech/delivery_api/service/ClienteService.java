@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 
 import com.deliverytech.delivery_api.dto.requests.ClienteDTO;
 import com.deliverytech.delivery_api.dto.responses.ClienteResponseDTO;
+import com.deliverytech.delivery_api.enums.Role;
 import com.deliverytech.delivery_api.exception.BusinessException;
 import com.deliverytech.delivery_api.exception.EntityNotFoundException;
 import com.deliverytech.delivery_api.model.Cliente;
 import com.deliverytech.delivery_api.model.Usuario;
 import com.deliverytech.delivery_api.repository.ClienteRepository;
+import com.deliverytech.delivery_api.repository.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -21,27 +23,31 @@ public class ClienteService {
 
 
     private final ClienteRepository repository;
+    private final UsuarioRepository usuarioRepository;
 
     private final ModelMapper mapper;
 
-    public ClienteService (ClienteRepository repository, ModelMapper mapper){
+    public ClienteService (ClienteRepository repository, ModelMapper mapper, UsuarioRepository usuarioRepository){
         this.repository = repository;
         this.mapper = mapper;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Transactional
-    public ClienteResponseDTO cadastrar(ClienteDTO dto, Usuario usuarioLogado) {
+    public ClienteResponseDTO cadastrar(ClienteDTO dto, String email) {
 
-        if (usuarioLogado == null) {
+        if (email == null) {
             throw new BusinessException("Usuário não autenticado.");
         }
 
-        if (!usuarioLogado.getRole().name().equals("CLIENTE")
-            && !usuarioLogado.getRole().name().equals("ADMIN")) {
+        Usuario usuarioLogado = usuarioRepository.findByEmail(email)
+        .orElseThrow(()-> new BusinessException("Usuário autenticado não encontrado no banco de dado."));
+
+        if (usuarioLogado.getRole() != Role.CLIENTE && usuarioLogado.getRole() != Role.ADMIN) {
             throw new BusinessException("Apenas CLIENTE ou ADMIN podem criar perfil de cliente.");
         }
 
-        // 🔒 evita duplicidade por usuário
+    
         if (repository.existsByUsuario_Id(usuarioLogado.getId())) {
             throw new BusinessException("Cliente já cadastrado para este usuário.");
         }
