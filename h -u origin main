@@ -1,0 +1,19 @@
+[33m0cf9862[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Subindo Encontro 20
+[33mf92db55[m Subindo atualização do encontro 16
+[33m75eb19a[m Subindo encontro 16
+[33m12fbfc2[m Subindo encontro 16
+[33m50f400b[m Subindo código de prática do encontro 16
+[33mb639e93[m Subindo código do encontro 14
+[33m8342479[m Subindo as demais camadas
+[33me754fe2[m Enviando DTO's de todas as camadas(entities).
+[33mc14a4c0[m Criando a camada se serviço e exceptions.
+[33m3dc8325[m Feito mais DTO's de teste.
+[33m5d59373[m Enviando camadas atualizadas
+[33m9172f5c[m Enviando a camada(model, repository) do Restaurante criada
+[33md2d3a62[m Enviando código da camada cliente atualizado para o remoto.
+[33mba1e7c9[m Código da camada so Cliente atualizada
+[33m33553a5[m Atualizado código camada cliente
+[33mc1aa9ac[m Enviando camada de cliente criada
+[33m05f86d4[m Criado README.md com informação do projeto
+[33m36d8916[m Eu criei a classe HealthController e configurei meu application.properties
+[33mfa0edb4[m Primeiro commit.
